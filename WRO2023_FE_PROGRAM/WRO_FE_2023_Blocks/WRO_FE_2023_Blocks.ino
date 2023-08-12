@@ -43,7 +43,7 @@ bool found_block = false;
 // Blocks config
 char Blocks_TURN = 'U';
 float avoidance_degree = 0;
-
+long timer_block_decay;
 
 // Specify the links and initial tuning parameters
 PID_v2 compassPID(0.6, 0.001, 0.07, PID::Direct);
@@ -93,7 +93,8 @@ void loop() {
       avoidance_degree = calculate_avoidance();
       pixy_timer = millis();
     }
-    int final_degree = (found_block ? mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree) : steering_degree);
+    // int final_degree = (found_block ? mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree) : steering_degree);
+    int final_degree = mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree);
     // steering_servo(steering_degree);
     // steering_servo(avoidance_degree);
     motor_and_steer(final_degree);

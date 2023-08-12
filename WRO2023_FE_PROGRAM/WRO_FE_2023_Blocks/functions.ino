@@ -150,7 +150,7 @@ void check_leds() {
 float calculate_avoidance() {
   int blocks = pixy.ccc.getBlocks();
 
-  found_block = false; //TODO: I wrote a bug and it works.
+  found_block = false;  //TODO: I wrote a bug and it works.
 
   if (blocks) {
     int signature = -1;       // Signature of the object you want to detect
@@ -173,43 +173,45 @@ float calculate_avoidance() {
       }
     }
 
-    if (signature == -1) {
-      return 0;
+    if (signature != -1) {
+      int objectHeight = pixy.ccc.blocks[largestBlockIndex].m_height;
+      float distance = (targetHeight * focalLength * 100) / objectHeight;
+
+      float blockCenterX = pixy.ccc.blocks[largestBlockIndex].m_x;
+      float blockCenterY = pixy.ccc.blocks[largestBlockIndex].m_y;
+
+      float deltaX = blockCenterX - pixy.frameWidth / 2;
+      float deltaY = blockCenterY - pixy.frameHeight / 2;
+
+      float detected_degree = deltaX * 40 / pixy.frameWidth;
+
+      float blockPositionX = distance * sin(degreesToRadians(detected_degree));
+      float blockPositionY = distance * cos(degreesToRadians(detected_degree)) - 17;
+
+      if (signature == 1) {
+        avoidance_degree = max(radiansToDegree(atan2(blockPositionX + 9, blockPositionY)), 0);
+        Blocks_TURN = 'R';
+      } else {
+        avoidance_degree = min(radiansToDegree(atan2(blockPositionX - 9, blockPositionY)), 0);
+        Blocks_TURN = 'L';
+      }
+      timer_block_decay = millis();
+
+      // Serial.print("Detected degree: ");
+      // Serial.print(detected_degree);
+      // Serial.println(" degree ");
+      // Serial.print("Position (X, Y): ");
+      // Serial.print(blockPositionX);
+      // Serial.print(", ");
+      // Serial.print(blockPositionY);
+      // Serial.print(" cm   Degree rotate: ");
+      // Serial.println(avoidance_degree);
     }
-
-    int objectHeight = pixy.ccc.blocks[largestBlockIndex].m_height;
-    float distance = (targetHeight * focalLength * 100) / objectHeight;
-
-    float blockCenterX = pixy.ccc.blocks[largestBlockIndex].m_x;
-    float blockCenterY = pixy.ccc.blocks[largestBlockIndex].m_y;
-
-    float deltaX = blockCenterX - pixy.frameWidth / 2;
-    float deltaY = blockCenterY - pixy.frameHeight / 2;
-
-    float detected_degree = deltaX * 40 / pixy.frameWidth;
-
-    float blockPositionX = distance * sin(degreesToRadians(detected_degree));
-    float blockPositionY = distance * cos(degreesToRadians(detected_degree)) - 17;
-
-    if (signature == 1) {
-      avoidance_degree = max(radiansToDegree(atan2(blockPositionX + 9, blockPositionY)), 0);
-      Blocks_TURN = 'R';
-    } else {
-      avoidance_degree = min(radiansToDegree(atan2(blockPositionX - 9, blockPositionY)), 0);
-      Blocks_TURN = 'L';
-    }
+  }
+  if (found_block) {
     return avoidance_degree;
-    // Serial.print("Detected degree: ");
-    // Serial.print(detected_degree);
-    // Serial.println(" degree ");
-    // Serial.print("Position (X, Y): ");
-    // Serial.print(blockPositionX);
-    // Serial.print(", ");
-    // Serial.print(blockPositionY);
-    // Serial.print(" cm   Degree rotate: ");
-    // Serial.println(avoidance_degree);
   } else {
-    return 0;
+    return avoidance_degree * min(max(mapf(millis() - timer_block_decay, 0, 500, 1, 0), 0), 1);
   }
 }
 
