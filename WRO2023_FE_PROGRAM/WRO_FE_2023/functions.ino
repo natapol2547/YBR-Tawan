@@ -77,11 +77,11 @@ void steering_servo(int degree) {
   servo1.write((90 + max(min(degree, 45), -45)) / 2);
 }
 
-// void beep() {
-//   digitalWrite(BUZZER, HIGH);
-//   delay(100);
-//   digitalWrite(BUZZER, LOW);
-// }
+void beep() {
+  digitalWrite(BUZZER, HIGH);
+  delay(100);
+  digitalWrite(BUZZER, LOW);
+}
 
 void line_detection() {
   int blue_value = analogRead(BLUE_SEN);

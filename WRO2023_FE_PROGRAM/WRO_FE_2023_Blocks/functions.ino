@@ -62,11 +62,11 @@ void motor(int speed) {
 void ultra_servo(int degree, char mode_steer) {
   int middle_degree = 0;
   if (mode_steer == 'F') {
-    middle_degree = 90;
+    middle_degree = 80;
   } else if (mode_steer == 'R') {
     middle_degree = 180;
   } else if (mode_steer == 'L' || mode_steer == 'U') {
-    middle_degree = 0;
+    middle_degree = 1 + 0;
   } else {
     beep();
   }
@@ -75,6 +75,12 @@ void ultra_servo(int degree, char mode_steer) {
 
 void steering_servo(int degree) {
   servo1.write((90 + max(min(degree, 45), -45)) / 2);
+}
+
+void motor_and_steer(int degree) {
+  degree = max(min(degree, 45), -45);
+  steering_servo(degree);
+  motor(map(abs(degree), 0, 45, 35, 40));
 }
 
 void beep() {
@@ -99,11 +105,13 @@ void line_detection() {
       if (lowest_red_sen > 600) {
         // Red
         TURN = 'R';
+        Blocks_TURN = 'R';
         compass_offset += 90;
         // beep();
       } else {
         // Blue
         TURN = 'L';
+        Blocks_TURN = 'L';
         compass_offset -= 90;
         // beep();
         // delay(100);
@@ -114,11 +122,13 @@ void line_detection() {
       halt_detect_line_timer = millis();
     }
   } else {
-    if (millis() - halt_detect_line_timer > 1000) {
+    if (millis() - halt_detect_line_timer > 2000) {
       if (blue_value < 600) {
         if (TURN == 'L') {
+          Blocks_TURN = 'L';
           compass_offset -= 90;
         } else {
+          Blocks_TURN = 'R';
           compass_offset += 90;
         }
         halt_detect_line_timer = millis();
@@ -139,30 +149,32 @@ void check_leds() {
 
 float calculate_avoidance() {
   int blocks = pixy.ccc.getBlocks();
-  
 
   if (blocks) {
-    found_block = true;
     int signature = -1;       // Signature of the object you want to detect
     int targetHeight = 10;    // Height of the object in centimeters
     float focalLength = 2.3;  // Focal length of the camera in centimeters
     float cameraFOV = 80.0;   // Field of view of the camera in degrees
 
-    float avoidance_degree = 0;
-
     int largestBlockIndex = -1;
     int largestBlockArea = 0;
 
-    for (int i = 0; i < blocks; i++) {
-      // if (pixy.ccc.blocks[i].m_signature == targetSignature) {
-      int objectArea = pixy.ccc.blocks[i].m_width * pixy.ccc.blocks[i].m_height;
+    found_block = false; //TODO: I wrote a bug and it works.
 
-      if (objectArea > largestBlockArea) {
-        largestBlockIndex = i;
-        largestBlockArea = objectArea;
-        signature = pixy.ccc.blocks[i].m_signature;
+    for (int i = 0; i < blocks; i++) {
+      if (pixy.ccc.blocks[i].m_height > 1.15 * pixy.ccc.blocks[i].m_width) {
+        int objectArea = pixy.ccc.blocks[i].m_width * pixy.ccc.blocks[i].m_height;
+        found_block = true;
+        if (objectArea > largestBlockArea) {
+          largestBlockIndex = i;
+          largestBlockArea = objectArea;
+          signature = pixy.ccc.blocks[i].m_signature;
+        }
       }
-      // }
+    }
+
+    if (signature == -1) {
+      return 0;
     }
 
     int objectHeight = pixy.ccc.blocks[largestBlockIndex].m_height;
@@ -180,9 +192,11 @@ float calculate_avoidance() {
     float blockPositionY = distance * cos(degreesToRadians(detected_degree)) - 17;
 
     if (signature == 1) {
-      avoidance_degree = max(radiansToDegree(atan2(blockPositionX + 7, blockPositionY)), 0);
+      avoidance_degree = max(radiansToDegree(atan2(blockPositionX + 9, blockPositionY)), 0);
+      Blocks_TURN = 'R';
     } else {
-      avoidance_degree = min(radiansToDegree(atan2(blockPositionX - 7, blockPositionY)), 0);
+      avoidance_degree = min(radiansToDegree(atan2(blockPositionX - 9, blockPositionY)), 0);
+      Blocks_TURN = 'L';
     }
     return avoidance_degree;
     // Serial.print("Detected degree: ");
@@ -194,9 +208,7 @@ float calculate_avoidance() {
     // Serial.print(blockPositionY);
     // Serial.print(" cm   Degree rotate: ");
     // Serial.println(avoidance_degree);
-  }
-  else{
-    found_block = false;
+  } else {
     return 0;
   }
 }

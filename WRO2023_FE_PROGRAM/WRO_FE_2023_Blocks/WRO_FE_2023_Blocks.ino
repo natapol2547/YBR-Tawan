@@ -4,6 +4,8 @@
 #include <Pixy2I2C.h>
 Pixy2I2C pixy;
 
+long pixy_timer;
+
 Servo servo1;
 Servo servo2;
 
@@ -38,8 +40,13 @@ int compass_offset = 0;
 long halt_detect_line_timer;
 bool found_block = false;
 
+// Blocks config
+char Blocks_TURN = 'U';
+float avoidance_degree = 0;
+
+
 // Specify the links and initial tuning parameters
-PID_v2 compassPID(0.35, 0.001, 0.07, PID::Direct);
+PID_v2 compassPID(0.6, 0.001, 0.07, PID::Direct);
 
 void setup() {
   compassPID.Start(0, 0, 0);
@@ -74,29 +81,22 @@ void setup() {
 }
 
 void loop() {
-  // motor(40);
-  // while (analogRead(BUTTON) > 500) {
-  //   getIMU();
-  //   line_detection();
-  //   steering_servo(-1 * compassPID.Run(pvYaw + ((getDistance() - 25) * 1) * ((float(TURN == 'R') - 0.5) * 2)));
-  //   ultra_servo(pvYaw, TURN);
-  // }
-  // while (analogRead(BUTTON) <= 500)
-  //   ;
-  // motor(0);
-  // while (analogRead(BUTTON) > 500)
-  //   ;
-  // while (analogRead(BUTTON) <= 500)
-  //   ;
-  motor(0);
+  
   while (analogRead(BUTTON) > 500) {
+    
     getIMU();
-    // line_detection();
-    float steering_degree = -1 * compassPID.Run(pvYaw + ((getDistance() - 20) * 1) * ((float(TURN == 'R') - 0.5) * 2));
+    ultra_servo(pvYaw, Blocks_TURN);
+    line_detection();
     float distance_wall = getDistance();
-    float avoidance_degree = calculate_avoidance();
-    steering_servo(found_block ? map(min(max(distance_wall, 10), 20), 10, 20, steering_degree, avoidance_degree) : steering_degree);
+    float steering_degree = -1 * compassPID.Run(pvYaw + ((distance_wall - 20)) * ((float(Blocks_TURN == 'R') - 0.5) * 2));
+    if (millis() - pixy_timer > 50) {
+      avoidance_degree = calculate_avoidance();
+      pixy_timer = millis();
+    }
+    int final_degree = (found_block ? mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree) : steering_degree);
+    // steering_servo(steering_degree);
     // steering_servo(avoidance_degree);
+    motor_and_steer(final_degree);
   }
   motor(0);
   while (analogRead(BUTTON) <= 500)
