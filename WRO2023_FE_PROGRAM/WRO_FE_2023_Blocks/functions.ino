@@ -150,6 +150,8 @@ void check_leds() {
 float calculate_avoidance() {
   int blocks = pixy.ccc.getBlocks();
 
+  found_block = false; //TODO: I wrote a bug and it works.
+
   if (blocks) {
     int signature = -1;       // Signature of the object you want to detect
     int targetHeight = 10;    // Height of the object in centimeters
@@ -158,8 +160,6 @@ float calculate_avoidance() {
 
     int largestBlockIndex = -1;
     int largestBlockArea = 0;
-
-    found_block = false; //TODO: I wrote a bug and it works.
 
     for (int i = 0; i < blocks; i++) {
       if (pixy.ccc.blocks[i].m_height > 1.15 * pixy.ccc.blocks[i].m_width) {
