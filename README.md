@@ -75,21 +75,21 @@ An incredible sensor that comes with **built-in temperature compensation**, whic
 
 <img src="https://thepihut.com/cdn/shop/products/geekservo-building-brick-180-rotation-block-servo-geekservo-104134-28717055836355_1500x.jpg?v=1646531299"  width="400"/>
 
-- **Color Sensor** - We use **TCS34725 Color Sensor** to detext the color of the field.
+- **Color Sensor** - We use **ZX-03** to detext the color of the field.
 
-<img src="https://m.media-amazon.com/images/I/81cM51-IKKS._AC_SL1200_.jpg"  width="400"/>
+<img src="https://inex.co.th/home/wp-content/uploads/2020/07/zx_03_tcrt.jpg" width="400"/>
 
-- **Compass or Gyro** - We use **CMPS-03** compass to determine the direction of our robot.
+- **Compass or Gyro** - We use **GY-25** compass to determine the direction of our robot.
 
-<img src="https://inex.co.th/home/wp-content/uploads/2020/07/cmps03.jpg"  width="400"/>
+<img src="https://inwfile.com/s-o/q6moq1.jpg"/>
 
 - **Camera** - We use **Pixy 2.1** for our robot because of its functionality along with the existing pre-made library by the developers
 
 <img src="https://www.zagrosrobotics.com/images/pixy2_3.jpg"  width="400"/>
 
-- **Microcontroller Board** - **Maker Nano RP2040**, the brain for our robot
+- **Microcontroller Board** - **Arduino UNO**, the brain for our robot
 
-<img src="https://circuitpython.org/assets/images/boards/large/cytron_maker_nano_rp2040.jpg"  width="400"/>
+<img src="https://www.warf.com/imagesitem/original/6534_3736.jpg" width="400"/>
 
 - **Custom-made PCB expansion board** (Made specifically for the WRO Competition)
 
