@@ -56,7 +56,13 @@ void motor(int speed) {
   } else {
     digitalWrite(INB, HIGH);
   }
-  analogWrite(ENB, map(speed, 0, 100, 0, 1023));
+  analogWrite(ENB, map(abs(speed), 0, 100, 0, 225));
+}
+
+void motor_and_steer(int degree) {
+  degree = max(min(degree, 45), -45);
+  steering_servo(degree);
+  motor(map(abs(degree), 0, 45, 80, 40));
 }
 
 void ultra_servo(int degree, char mode_steer) {
@@ -98,12 +104,12 @@ void line_detection() {
       }
       if (lowest_red_sen > 600) {
         // Red
-        TURN = 'R';
+        TURN = 'L';
         compass_offset += 90;
         // beep();
       } else {
         // Blue
-        TURN = 'L';
+        TURN = 'R';
         compass_offset -= 90;
         // beep();
         // delay(100);
@@ -111,17 +117,19 @@ void line_detection() {
         // delay(100);
         // beep();
       }
+      lines_detect_num++;
       halt_detect_line_timer = millis();
     }
   } else {
     if (millis() - halt_detect_line_timer > 1000) {
       if (blue_value < 600) {
-        if (TURN == 'L') {
+        if (TURN == 'R') {
           compass_offset -= 90;
         } else {
           compass_offset += 90;
         }
         halt_detect_line_timer = millis();
+        lines_detect_num++;
       }
     }
   }

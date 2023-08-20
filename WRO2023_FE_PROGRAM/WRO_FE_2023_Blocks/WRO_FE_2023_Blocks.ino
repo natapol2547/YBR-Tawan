@@ -39,14 +39,16 @@ char TURN = 'U';
 int compass_offset = 0;
 long halt_detect_line_timer;
 bool found_block = false;
+int lines_detect_num = 0;
 
 // Blocks config
 char Blocks_TURN = 'U';
 float avoidance_degree = 0;
 long timer_block_decay;
+float found_block_factor;
 
 // Specify the links and initial tuning parameters
-PID_v2 compassPID(0.6, 0.001, 0.07, PID::Direct);
+PID_v2 compassPID(0.75, 0.001, 0.035, PID::Direct);
 
 void setup() {
   compassPID.Start(0, 0, 0);
@@ -73,30 +75,39 @@ void setup() {
   // check_leds();
   while (analogRead(BUTTON) > 500)
     ;
-  zeroYaw();
+
   while (analogRead(BUTTON) <= 500)
     ;
-
+  zeroYaw();
   beep();
 }
 
 void loop() {
-  
+  long countdown_stop = millis();
   while (analogRead(BUTTON) > 500) {
-    
+
     getIMU();
     ultra_servo(pvYaw, Blocks_TURN);
     line_detection();
-    float distance_wall = getDistance();
+    float distance_wall = 4;
     float steering_degree = -1 * compassPID.Run(pvYaw + ((distance_wall - 20)) * ((float(Blocks_TURN == 'R') - 0.5) * 2));
     if (millis() - pixy_timer > 50) {
       avoidance_degree = calculate_avoidance();
       pixy_timer = millis();
     }
-    // int final_degree = (found_block ? mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree) : steering_degree);
-    int final_degree = mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree);
+    // int final_degree = (found_block || (found_block_factor > 0) ? mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree) : steering_degree);
+    int final_degree = map(max(found_block, found_block_factor), 1, 0, mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree), steering_degree);
     // steering_servo(steering_degree);
     // steering_servo(avoidance_degree);
+    if (millis() - countdown_stop > 3000) {
+      // Stops everything
+      motor(0);
+      while (true)
+        ;
+    }
+    if (lines_detect_num < 12) {
+      countdown_stop = millis();
+    }
     motor_and_steer(final_degree);
   }
   motor(0);

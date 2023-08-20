@@ -34,9 +34,10 @@ int const BUTTON = 3;
 char TURN = 'U';
 int compass_offset = 0;
 long halt_detect_line_timer;
+int lines_detect_num = 0;
 
 // Specify the links and initial tuning parameters
-PID_v2 compassPID(0.35, 0.001, 0.07, PID::Direct);
+PID_v2 compassPID(0.4, 0.001, 0.04, PID::Direct);
 
 void setup() {
   compassPID.Start(0, 0, 0);
@@ -61,19 +62,31 @@ void setup() {
   // check_leds();
   while (analogRead(BUTTON) > 500)
     ;
-  zeroYaw();
   while (analogRead(BUTTON) <= 500)
     ;
+  zeroYaw();
   beep();
 }
 
 void loop() {
-  motor(40);
+  // motor(60);
+  long countdown_stop = millis();
   while (analogRead(BUTTON) > 500) {
     getIMU();
     line_detection();
-    steering_servo(-1 * compassPID.Run(pvYaw + ((getDistance() - 25) * 1) * ((float(TURN == 'R') - 0.5) * 2)));
+    // steering_servo(-1 * compassPID.Run(pvYaw + ((getDistance() - 20) * 1) * ((float(TURN == 'R') - 0.5) * 2)));
     ultra_servo(pvYaw, TURN);
+    int wall_distance = getDistance();
+    motor_and_steer(-1 * compassPID.Run(pvYaw + ((wall_distance - 25) * 1) * ((float(TURN == 'R') - 0.5) * 2)));
+    if (millis() - countdown_stop > 1200) {
+      // Stops everything
+      motor(0);
+      while (true)
+        ;
+    }
+    if (lines_detect_num < 12) {
+      countdown_stop = millis();
+    }
   }
   while (analogRead(BUTTON) <= 500)
     ;
