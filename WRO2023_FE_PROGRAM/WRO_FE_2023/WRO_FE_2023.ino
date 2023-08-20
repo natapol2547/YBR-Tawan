@@ -53,13 +53,13 @@ void setup() {
   pinMode(BLUE_SEN, INPUT);
   pinMode(BUTTON, INPUT);
   Serial.begin(115200);
+  // check_leds();
   while (!Serial)
     ;
   servo1.attach(STEER_SRV, 500, 2500);
   servo2.attach(ULTRA_SRV, 500, 2500);
   steering_servo(0);
   ultra_servo(0, 'L');
-  // check_leds();
   while (analogRead(BUTTON) > 500)
     ;
   while (analogRead(BUTTON) <= 500)

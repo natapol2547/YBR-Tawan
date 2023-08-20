@@ -1,6 +1,6 @@
 void zeroYaw() {
-  Serial.begin(115200);
-  delay(100);
+  // Serial.begin(115200);
+  // delay(100);
   // Sets data rate to 115200 bps
   Serial.write(0XA5);
   delay(10);
@@ -110,13 +110,13 @@ void line_detection() {
       if (lowest_red_sen > 600) {
         // Red
         TURN = 'R';
-        Blocks_TURN = 'R';
+        // Blocks_TURN = 'R';
         compass_offset += 90;
         // beep();
       } else {
         // Blue
         TURN = 'L';
-        Blocks_TURN = 'L';
+        // Blocks_TURN = 'L';
         compass_offset -= 90;
         // beep();
         // delay(100);
@@ -128,20 +128,24 @@ void line_detection() {
       halt_detect_line_timer = millis();
     }
   } else {
-    if (millis() - halt_detect_line_timer > 2500) {
+    if (millis() - halt_detect_line_timer > 2000) {
       if (found_block) {
         timer_block_decay = millis();
       }
       if (blue_value < 600) {
         if (TURN == 'L') {
-          Blocks_TURN = 'L';
+          // Blocks_TURN = 'L';
           compass_offset -= 90;
         } else {
-          Blocks_TURN = 'R';
+          // Blocks_TURN = 'R';
           compass_offset += 90;
         }
         halt_detect_line_timer = millis();
         lines_detect_num++;
+      }
+    } else{
+      if (blue_value < 600) {
+        halt_detect_line_timer = millis();
       }
     }
   }
@@ -173,7 +177,8 @@ float calculate_avoidance() {
 
     for (int i = 0; i < blocks; i++) {
       if (pixy.ccc.blocks[i].m_height > 1.33 * float(pixy.ccc.blocks[i].m_width)) {
-        int objectArea = pixy.ccc.blocks[i].m_width * pixy.ccc.blocks[i].m_height;
+        int objectArea = pixy.ccc.blocks[i].m_width;
+        // * pixy.ccc.blocks[i].m_height;
         found_block = true;
         if (objectArea > largestBlockArea) {
           largestBlockIndex = i;

@@ -13,8 +13,6 @@ Servo servo2;
 float pvYaw, pvRoll, pvPitch;
 uint8_t rxCnt = 0, rxBuf[8];
 
-// Hello
-
 //  Motor B
 int const ENB = 11;
 int const INB = 13;
@@ -77,10 +75,10 @@ void setup() {
   // check_leds();
   while (analogRead(BUTTON) > 500)
     ;
-  
+  zeroYaw();
   while (analogRead(BUTTON) <= 500)
     ;
-  zeroYaw();
+
   // beep();
 }
 
@@ -92,24 +90,25 @@ void loop() {
     ultra_servo(pvYaw, Blocks_TURN);
     line_detection();
     float distance_wall = getDistance();
-    float steering_degree = -1 * compassPID.Run(pvYaw + ((distance_wall - 20)) * ((float(Blocks_TURN == 'R') - 0.5) * 2));
+    float steering_degree = -1 * compassPID.Run(pvYaw + ((distance_wall - 27)) * ((float(Blocks_TURN == 'R') - 0.5) * 2));
     if (millis() - pixy_timer > 50) {
       avoidance_degree = calculate_avoidance();
       pixy_timer = millis();
     }
     // int final_degree = (found_block || (found_block_factor > 0) ? mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree) : steering_degree);
-    int final_degree = map(max(found_block, found_block_factor), 1, 0, mapf(min(max(distance_wall, 10), 45), 10, 45, steering_degree, avoidance_degree), steering_degree);
+    int final_degree = map(max(found_block, found_block_factor), 1, 0, mapf(min(max(distance_wall, 5), 40), 5, 40, steering_degree, avoidance_degree), steering_degree);
     // steering_servo(steering_degree);
     // steering_servo(avoidance_degree);
-    if (millis() - countdown_stop > 3000) {
+
+    if (millis() - halt_detect_line_timer > 2000 && lines_detect_num >= 12) {
       // Stops everything
       motor(0);
       while (true)
         ;
     }
-    if (lines_detect_num < 12) {
-      countdown_stop = millis();
-    }
+    // if (lines_detect_num < 12) {
+    //   countdown_stop = millis();
+    // }
     motor_and_steer(final_degree);
   }
   motor(0);
