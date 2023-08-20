@@ -14,7 +14,7 @@ int const ENB = 11;
 int const INB = 13;
 
 //  Buzzer
-int const BUZZER = 4;
+// int const BUZZER = 4;
 
 //  Servos
 int const STEER_SRV = 9;
@@ -43,7 +43,7 @@ void setup() {
   compassPID.Start(0, 0, 0);
   compassPID.SetOutputLimits(-180, 180);
   compassPID.SetSampleTime(10);
-  pinMode(BUZZER, OUTPUT);
+  // pinMode(BUZZER, OUTPUT);
   pinMode(ENB, OUTPUT);
   pinMode(INB, OUTPUT);
   pinMode(STEER_SRV, OUTPUT);
@@ -65,7 +65,7 @@ void setup() {
   while (analogRead(BUTTON) <= 500)
     ;
   zeroYaw();
-  beep();
+  // beep();
 }
 
 void loop() {

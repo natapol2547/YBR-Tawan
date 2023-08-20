@@ -69,7 +69,7 @@ void ultra_servo(int degree, char mode_steer) {
   } else if (mode_steer == 'L' || mode_steer == 'U') {
     middle_degree = 15;
   } else {
-    beep();
+    // beep();
   }
   servo2.write((max(min(middle_degree + degree, 180), 0)) / 2);
 }
@@ -82,14 +82,14 @@ void motor_and_steer(int degree) {
   degree = max(min(degree, 45), -45);
   steering_servo(degree);
   // motor(35);
-  motor(map(abs(degree), 0, 45, 40, 35));
+  motor(map(abs(degree), 0, 45, 45, 35));
 }
 
-void beep() {
-  digitalWrite(BUZZER, HIGH);
-  delay(100);
-  digitalWrite(BUZZER, LOW);
-}
+// void beep() {
+//   digitalWrite(BUZZER, HIGH);
+//   delay(100);
+//   digitalWrite(BUZZER, LOW);
+// }
 
 void line_detection() {
   int blue_value = analogRead(BLUE_SEN);
