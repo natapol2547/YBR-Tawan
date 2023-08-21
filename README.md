@@ -12,12 +12,17 @@
 <p align="center">
 <b>By Yothinburana School Robot Club</b>
 </p>
+
+![Team](https://github.com/natapol2547/YBR-Tawan/blob/main/Team%20Picture/Playful.jpg?raw=true)
+
 <br><br><br><br>
 
-## Our works (Youtube Links): 
-Qualification round: https://youtu.be/Iuq2aRa-G8A
+## Our robot (Youtube Links): 
+Qualification Round (Time 37 sec)
+https://youtu.be/zxlOy2REIk4
 
-Final round: https://youtu.be/I5dHPB5TrM8
+Final Round (Time 45 sec)
+https://youtu.be/RNagUxmCIuk
 
 
 <br>
@@ -36,7 +41,7 @@ Final round: https://youtu.be/I5dHPB5TrM8
 
 ### **The Robot** 💻
 
-![robot](https://raw.githubusercontent.com/natapol2547/YBR-Tawan/main/Robot%20Picture/Robot%20Right.jpg?token=GHSAT0AAAAAACFBWY6HQCRKNS7HOLHY6WFWZHCE2QA)
+![robot](https://github.com/natapol2547/YBR-Tawan/blob/main/Robot%20Picture/Robot%20Right.jpg?raw=true)
 
 <br>
 
@@ -430,6 +435,6 @@ For further questions please email robloxplay41@gmail.com
    [Pixymon V2]: <https://github.com/charmedlabs/pixy/raw/master/releases/pixymon_windows/pixymon_windows-2.0.9.exe>
    [Wikipedia - Bezier Curve]: <https://en.wikipedia.org/wiki/B%C3%A9zier_curve>
    [Arduino-pico Github]: <https://github.com/earlephilhower/arduino-pico>
-   [Arduino IDE 2.0.1]: <https://www.arduino.cc/en/software>
+   [Arduino IDE 2.1.1]: <https://www.arduino.cc/en/software>
    [atan2 - Wikipedia]: <https://en.wikipedia.org/wiki/Atan2>
 
