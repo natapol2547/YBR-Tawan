@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "766c2579435e4c35",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -146,6 +159,12 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "5649586099a2b737",
-  "lastOpenFiles": []
+  "active": "766c2579435e4c35",
+  "lastOpenFiles": [
+    "LIFE.md",
+    "Team Picture/Formal.jpg",
+    "Calculus.md",
+    "Untitled.md",
+    "README.md"
+  ]
 }
